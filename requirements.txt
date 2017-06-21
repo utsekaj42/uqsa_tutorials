@@ -1,2 +1,10 @@
-chaospy
+chaospy>=2.2.2
+setuptools
+numpy
+scipy
+matplotlib==2
+pandas
+sympy
+IPython
+statsmodels
 
