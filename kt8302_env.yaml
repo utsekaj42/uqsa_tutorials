@@ -1,0 +1,16 @@
+# To create the environment just run the command below
+# conda-env create -f tutorial.yml
+name: kt8302 
+channels:
+  - jsturdy
+dependencies:
+  - python =3
+  - jupyter
+  - numpy
+  - chaospy >=2.2.2
+  - matplotlib
+  - scipy
+  - tabulate
+  - sympy
+  - pandas
+
