@@ -81,7 +81,7 @@ def calculate_sensitivity_indices_mc(y_a, y_b, y_c):
     elif len(y_c.shape) == 3:
         n_y, Ns, n_parameters = y_c.shape
         # for the first order index
-        f0sq_first = np.sum(y_a, axis=1) / Ns * np.sum(y_b, axis=1) / Ns
+        f0sq_first = np.sum(y_a*y_b, axis=1) / Ns
         y_var_first = np.sum(y_b ** 2., axis=1) / (Ns - 1) - f0sq_first
 
         # for the total index

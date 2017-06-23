@@ -171,7 +171,15 @@ for model, name, color in [(quadratic_area_model, 'Quadratic model', '#dd3c30'),
     print('{:2.5f} | {:2.5f} : {}'.format(np.mean(expected_value)* unit_m2_cm2, np.mean(std)* unit_m2_cm2, name))
 
     # 3. Approximate the sensitivity indices
+    # Better to centralize data before calculating sensitivities
+    expected_value_col = expected_value.copy()
+    expected_value_col.shape = (expected_value.shape[0],1)
+    Y_Ac = Y_A - expected_value_col
+    Y_Bc = Y_B  - expected_value_col
+    Y_Cc = Y_C.transpose() - expected_value
+    Y_Cc = Y_Cc.transpose()
     S, ST = calculate_sensitivity_indices_mc(Y_A, Y_B, Y_C)
+    Sc, STc = calculate_sensitivity_indices_mc(Y_Ac, Y_Bc, Y_Cc)
 
     ## Plots
     plt.figure('mean')

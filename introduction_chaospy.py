@@ -58,6 +58,30 @@ ax2.set_ylabel("Uniform 2")
 ax2.axis('equal')
 # end example sampling
 
+# example save samples to file
+# Creates a csv file where each row corresponds to the sample number and each column with teh variables in the joint distribution
+csv_file = "csv_samples.csv"
+sep = '\t'
+header = ["u1", "u2"]
+header = sep.join(header)
+np.savetxt(csv_file, samples_random, delimiter=sep, header=header)
+# end example save samples to file
+
+# generate external data
+ext_data = np.array([sample[0] + sample[1] + sample[0]*sample[1] for sample in samples_random.T])
+header = ['y0']
+header = sep.join(header)
+filepath = "external_evaluations.csv"
+np.savetxt(filepath, ext_data, delimiter=sep, header=header)
+# end generate external data
+
+# example load samples from file
+# loads a csv file where the samples/or model evaluations for each sample are saved
+# with one sample per row. Multiple components ofoutput can be stored as separate columns 
+filepath = "external_evaluations.csv"
+data = np.loadtxt(filepath)
+# end example load samples from file
+
 # === quadrature ===
 # quadrature in polychaos
 cp.generate_quadrature?
@@ -114,29 +138,22 @@ x = np.linspace(0,1, 50)
 # the polynomial order of the orthogonal polynomials
 polynomial_order = 3
 
-poly = cp.orth_bert(polynomial_order, n, normed=True)
-print('Bertran recursion {}'.format(poly))
-ax = plt.subplot(221)
-ax.set_title('Bertran recursion')
-_=plt.plot(x, poly(x).T)
-_=plt.xticks([])
-
 poly = cp.orth_chol(polynomial_order, n, normed=True)
 print('Cholesky decomposition {}'.format(poly))
-ax = plt.subplot(222)
+ax = plt.subplot(131)
 ax.set_title('Cholesky decomposition')
 _=plt.plot(x, poly(x).T)
 _=plt.xticks([])
 
 poly = cp.orth_ttr(polynomial_order, n, normed=True)
 print('Discretized Stieltjes / Thre terms reccursion {}'.format(poly))
-ax = plt.subplot(223)
+ax = plt.subplot(132)
 ax.set_title('Discretized Stieltjes ')
 _=plt.plot(x, poly(x).T)
 
 poly = cp.orth_gs(polynomial_order, n, normed=True)
 print('Modified Gram-Schmidt {}'.format(poly))
-ax = plt.subplot(224)
+ax = plt.subplot(133)
 ax.set_title('Modified Gram-Schmidt')
 _=plt.plot(x, poly(x).T)
 # end example orthogonalization schemes
@@ -229,3 +246,34 @@ for k, (s_reg, s_ps, st_reg, st_ps) in enumerate(zip(sensFirst_reg, sensFirst_ps
     print('S_{} : {:>6.3f} | {:>6.3f}         ST_{} : {:>6.3f} | {:>6.3f}'.format(k, s_reg, s_ps, k, st_reg, st_ps))
 # end example sens
 
+# example exact solution
+import sympy as sp
+import sympy.stats
+from sympy.utilities.lambdify import lambdify, implemented_function
+
+pdf_beta = lambda b: 1
+support_beta = (pdf_beta,0,1)
+         
+pdf_chi = lambda x:  1
+support_chi = (pdf_chi,0, 1)
+x, b = sp.symbols("x, b")
+y = x + x*b
+
+support_beta = (b,0,1)
+support_chi = (x,0,1)
+mean_g_beta = sp.Integral(y*pdf_chi(x), support_chi)
+mean_g_chi =  sp.Integral(y*pdf_beta(b), support_beta)
+mean = sp.Integral(mean_g_beta*pdf_beta(b), support_beta)
+print("Expected value {}".format(mean.doit()))
+variance = sp.Integral(pdf_beta(b)*sp.Integral(pdf_chi(x)*(y-mean)**2,support_chi), support_beta)
+print("Variance: {}".format(variance.doit()))
+var_E_g_beta = sp.Integral(pdf_beta(b)*(mean_g_beta-mean)**2, support_beta)
+var_E_g_chi = sp.Integral(pdf_chi(x)*(mean_g_chi-mean)**2, support_chi)
+
+S_chi =  var_E_g_chi/variance
+S_beta = var_E_g_beta/variance
+
+
+print("S_beta {}".format(S_beta.doit()))
+print("S_chi {}".format(S_chi.doit()))
+# end example exact solution
