@@ -7,6 +7,4 @@ pandas
 sympy
 IPython
 statsmodels
-git+https://github.com/jonathf/chaospy.git@development#egg=chaospy
-
-
+-e git+https://github.com/jonathf/chaospy.git@development#egg=chaospy
