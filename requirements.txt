@@ -7,3 +7,5 @@ pandas
 sympy
 IPython
 statsmodels
+xlwt
+
