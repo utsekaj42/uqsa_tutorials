@@ -1,3 +1,7 @@
+import numpy as np
+import chaospy as cp
+import matplotlib.pyplot as plt
+
 def calculate_uqsa_measures(joint_dist, polynomial, alpha=5):
     """ Use chaospy to calculate appropriate indices of uq and sa"""
     dists = joint_dist

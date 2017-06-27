@@ -147,7 +147,14 @@ number_of_parameters = len(jpdf)
 # 1. Generate sample matrices
 A, B, C = generate_sample_matrices_mc(Ns, number_of_parameters, jpdf, sample_method)
 
-plt.figure('mean')
+fig_mean = plt.figure('mean')
+ax_mean = fig_mean.add_subplot(1,2,1)
+ax_dict = {}
+figs = {}
+for name in ['Quadratic model', 'Logarithmic model'] :
+    figs[name] = plt.figure(name)
+    ax = ax_dict[name]= figs[name].add_subplot(1,2,1)
+    
 print("\n Uncertainty measures (averaged)\n")
 print('\n  E(Y)  |  Std(Y) \n')
 for model, name, color in [(quadratic_area_model, 'Quadratic model', '#dd3c30'),
@@ -182,30 +189,35 @@ for model, name, color in [(quadratic_area_model, 'Quadratic model', '#dd3c30'),
     Sc, STc = calculate_sensitivity_indices_mc(Y_Ac, Y_Bc, Y_Cc)
 
     ## Plots
-    plt.figure('mean')
-    plt.plot(pressure_range * unit_pa_mmhg, expected_value * unit_m2_cm2, label=name, color=color)
-    plt.fill_between(pressure_range * unit_pa_mmhg, prediction_interval[0] * unit_m2_cm2,
+    fig = fig_mean
+    ax_mean = ax_mean
+    ax_mean.plot(pressure_range * unit_pa_mmhg, expected_value * unit_m2_cm2, label=name, color=color)
+    ax_mean.fill_between(pressure_range * unit_pa_mmhg, prediction_interval[0] * unit_m2_cm2,
                      prediction_interval[1] * unit_m2_cm2, alpha=0.3, color=color)
-    plt.xlabel('Pressure [mmHg]')
-    plt.ylabel('Area [cm2]')
-    plt.legend()
-    plt.tight_layout()
+    ax_mean.set_xlabel('Pressure [mmHg]')
+    ax_mean.set_ylabel('Area [cm2]')
+    ax_mean.legend()
+    fig.tight_layout()
 
-    plt.figure()
-    plt.title('{}: sensitvity indices'.format(name))
+    fig = figs[name]
+    ax = ax_dict[name]
+    ax.set_title('{}: sensitvity indices'.format(name))
     colorsPie = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
     labels = ['Area', 'wave speed', 'pressure', 'density']
-
-    firstOrderIndicesTimeAverage = np.mean(S * variance, axis=1) / np.mean(variance)
-    totalIndicesTimeAverage = np.mean(ST * variance, axis=1) / np.mean(variance)
     N = 4
-
     ind = np.arange(N)  # the x locations for the groups
     width = 0.35  # the width of the bars
 
-    rects1 = plt.bar(ind, firstOrderIndicesTimeAverage, width, color=colorsPie, alpha=0.5)
-    rects2 = plt.bar(ind + width, totalIndicesTimeAverage, width, color=colorsPie, hatch='.')
-    ax = plt.gca()
+    #firstOrderIndicesTimeAverage = S[:, 50]
+    #totalIndicesTimeAverage = ST[:, 50]
+    #rects1 = plt.bar(ind, firstOrderIndicesTimeAverage, width, color=colorsPie, alpha=0.5)
+    #rects2 = plt.bar(ind + width, totalIndicesTimeAverage, width, color=colorsPie, hatch='.')
+
+    firstOrderIndicesTimeAverage = np.mean(S*variance,axis=1)/np.mean(variance)
+    totalIndicesTimeAverage = np.mean(ST*variance,axis=1)/np.mean(variance)
+    rects1 = ax.bar(ind, firstOrderIndicesTimeAverage, width, color=colorsPie, alpha = 0.5)
+    rects2 = ax.bar(ind + width, totalIndicesTimeAverage, width, color=colorsPie, hatch = '.')
+
     # add some text for labels, title and axes ticks
     ax.set_ylabel('Si')
     ax.set_xticks(ind + width)
@@ -217,17 +229,25 @@ for model, name, color in [(quadratic_area_model, 'Quadratic model', '#dd3c30'),
     ax.spines['right'].set_visible(False)
     ax.tick_params(axis='y', right='off')
 
-    plt.tight_layout()
+    fig.tight_layout()
 # end Monte Carlo
 
 # start polynomial chaos
 # orthogonal C_polynomial from marginals
 polynomial_order = 3
-Ns = 100
+Ns = 2*cp.bertran.terms(polynomial_order, len(jpdf))
 
 print("\n Uncertainty measures (averaged)\n")
 print('\n  E(Y)  |  Std(Y) \n')
-plt.figure('mean')
+
+
+
+ax_mean = fig_mean.add_subplot(1,2,2)
+ax_dict = {}
+for name in ['Quadratic model', 'Logarithmic model'] :
+    figs[name] = plt.figure(name)
+    ax = ax_dict[name]= figs[name].add_subplot(1,2,2)
+    
 for model, name, color in [(quadratic_area_model, 'Quadratic model', '#dd3c30'),
                            (logarithmic_area_model, 'Logarithmic model', '#2775b5')]:
     sample_scheme = 'R'
@@ -254,17 +274,19 @@ for model, name, color in [(quadratic_area_model, 'Quadratic model', '#dd3c30'),
     S = cp.Sens_m(polynomial_expansion, jpdf)
     ST = cp.Sens_t(polynomial_expansion, jpdf)
 
-    plt.figure('mean')
-    plt.plot(pressure_range * unit_pa_mmhg, expected_value * unit_m2_cm2, label=name, color=color)
-    plt.fill_between(pressure_range * unit_pa_mmhg, prediction_interval[0] * unit_m2_cm2,
+    fig = fig_mean
+    ax_mean =  ax_mean
+    ax_mean.plot(pressure_range * unit_pa_mmhg, expected_value * unit_m2_cm2, label=name, color=color)
+    ax_mean.fill_between(pressure_range * unit_pa_mmhg, prediction_interval[0] * unit_m2_cm2,
                      prediction_interval[1] * unit_m2_cm2, alpha=0.3, color=color)
-    plt.xlabel('Pressure [mmHg]')
-    plt.ylabel('Area [cm2]')
-    plt.legend()
-    plt.tight_layout()
+    ax_mean.set_xlabel('Pressure [mmHg]')
+    ax_mean.set_ylabel('Area [cm2]')
+    ax_mean.legend()
+    fig.tight_layout()
 
-    plt.figure(name)
-    plt.title('{}: sensitvity indices'.format(name))
+    fig = figs[name]
+    ax = ax_dict[name]
+    ax.set_title('{}: sensitvity indices'.format(name))
     colorsPie = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
     labels = ['Area', 'wave speed', 'pressure', 'density']
     N = 4
@@ -278,10 +300,9 @@ for model, name, color in [(quadratic_area_model, 'Quadratic model', '#dd3c30'),
 
     firstOrderIndicesTimeAverage = np.mean(S*variance,axis=1)/np.mean(variance)
     totalIndicesTimeAverage = np.mean(ST*variance,axis=1)/np.mean(variance)
-    rects1 = plt.bar(ind, firstOrderIndicesTimeAverage, width, color=colorsPie, alpha = 0.5)
-    rects2 = plt.bar(ind + width, totalIndicesTimeAverage, width, color=colorsPie, hatch = '.')
+    rects1 = ax.bar(ind, firstOrderIndicesTimeAverage, width, color=colorsPie, alpha = 0.5)
+    rects2 = ax.bar(ind + width, totalIndicesTimeAverage, width, color=colorsPie, hatch = '.')
 
-    ax = plt.gca()
     # add some text for labels, title and axes ticks
     ax.set_ylabel('Si')
     ax.set_xticks(ind + width)
@@ -293,7 +314,7 @@ for model, name, color in [(quadratic_area_model, 'Quadratic model', '#dd3c30'),
     ax.spines['right'].set_visible(False)
     ax.tick_params(axis='y', right='off')
 
-    plt.tight_layout()
+    fig.tight_layout()
 # end polynomial chaos
 
 plt.show()

@@ -115,9 +115,8 @@ u2 = cp.Uniform(0,1)
 joint_distribution = cp.J(u1, u2)
 
 order = 2
-# sparse grid has exponential growth, thus a smaller order results in more points
-nodes_clenshaw, weights_clenshaw = cp.generate_quadrature(order=order, domain=joint_distribution, rule='C', growth=True)
-nodes_clenshaw_sparse, weights_clenshaw_sparse = cp.generate_quadrature(order=order, domain=joint_distribution, rule='C', sparse=True, growth=True)
+nodes_clenshaw, weights_clenshaw = cp.generate_quadrature(order=order, domain=joint_distribution, rule='C')
+nodes_clenshaw_sparse, weights_clenshaw_sparse = cp.generate_quadrature(order=order, domain=joint_distribution, rule='C', sparse=True)
 
 print('Number of nodes normal clenshaw-curtis quadrature: {}'.format(len(nodes_clenshaw[0])))
 print('Number of nodes clenshaw-curtis quadrature with sparse grid : {}'.format(len(nodes_clenshaw_sparse[0])))
@@ -175,7 +174,7 @@ polynomial_order = 3
 poly = cp.orth_ttr(polynomial_order, joint_distribution)
 
 # 3.1 generate samples
-number_of_samples = 100
+number_of_samples = 2*cp.bertran.terms(polynomial_order, len(joint_distribution))
 samples = joint_distribution.sample(size=number_of_samples, rule='R')
 
 # 3.2 evaluate the simple model for all samples
@@ -183,6 +182,7 @@ model_evaluations = samples[0]+samples[1]*samples[0]
 
 # 3.3 use regression to generate the polynomial chaos expansion
 gpce_regression = cp.fit_regression(poly, samples, model_evaluations)
+print("Success")
 # end example linear regression
 
 
@@ -211,6 +211,7 @@ model_evaluations = nodes[0]+nodes[1]*nodes[0]
 
 # 4.3 use quadrature to generate the polynomial chaos expansion
 gpce_quadrature = cp.fit_quadrature(poly, nodes, weights, model_evaluations)
+print("Success")
 # end example spectral projection
 
 # example uq
