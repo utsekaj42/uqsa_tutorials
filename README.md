@@ -1,6 +1,6 @@
 image:: http://mybinder.org/badge.svg :target: http://mybinder.org:/repo/utsekaj42/uqsa_tutorials
 
-tulip Tutorial
+UQSA and Polynomial Chaos with `chaospy` Tutorial
 
 This project contains the jupyter notebooks and slides for the Berkeley-NTNU UQSA Workshop on June 27th, 2017.
 
@@ -22,5 +22,3 @@ Contact
 For questions about the tutorial content
 
 Contact: Jacob Sturdy jacob.t.sturdy@ntnu.no or Leif Rune Hellevik leif.r.hellevik@ntnu.no
-
-For questions about the Dockerfile or beta.mybinder.org
