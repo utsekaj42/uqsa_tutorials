@@ -193,13 +193,13 @@ if __name__ == '__main__':
     for k in range(N_terms):
         plt.subplot(2, N_terms, k + 1)
         _=plt.plot(Zs[:, k], Ys[:], '.')
-        if k==0 : plt.ylabel('Y')
+        if k==0 : plt.label('Y')
         plt.xlabel('Z{}'.format(k+1))
         plt.ylim([-150, 150])
 
         plt.subplot(2, N_terms, k + 1 + N_terms)
         _=plt.plot(Ws[:, k], Ys[:], '.')
-        if k==0 : plt.ylabel('Y')
+        if k==0 : plt.label('Y')
         plt.xlabel('W{}'.format(k+1))
         plt.ylim([-150, 150])
     scatter.tight_layout()    

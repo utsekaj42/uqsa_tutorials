@@ -16,6 +16,8 @@ from monte_carlo import calculate_sensitivity_indices_mc
 import pandas as pd
 from _operator import index
 
+cp.Sens_m
+
 # start the linear model
 def linear_model(w, z):
     return np.sum(w*z, axis=1)
@@ -66,7 +68,8 @@ if __name__ == '__main__':
     # Set mean (column 0) and standard deviations (column 1) for each factor z. Nrv=nr. rows
     Nrv = 4  # number of random variables 
     zm = np.array([[0., i] for i in range(1, Nrv + 1)])
-    # The above "list comprehension" is equivalent to  thenext four lines 
+
+    # The above "list comprehension" is equivalent to the next for lines
     # zm = np.zeros((Nrv, 2))
     # zm[0, 1] = 1
     # zm[1, 1] = 2

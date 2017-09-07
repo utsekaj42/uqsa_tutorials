@@ -115,6 +115,7 @@ u2 = cp.Uniform(0,1)
 joint_distribution = cp.J(u1, u2)
 
 order = 2
+# sparse grid has exponential growth, thus a smaller order results in more points
 nodes_clenshaw, weights_clenshaw = cp.generate_quadrature(order=order, domain=joint_distribution, rule='C')
 nodes_clenshaw_sparse, weights_clenshaw_sparse = cp.generate_quadrature(order=order, domain=joint_distribution, rule='C', sparse=True)
 
@@ -145,7 +146,7 @@ _=plt.plot(x, poly(x).T)
 _=plt.xticks([])
 
 poly = cp.orth_ttr(polynomial_order, n, normed=True)
-print('Discretized Stieltjes / Thre terms reccursion {}'.format(poly))
+print('Discretized Stieltjes / Three terms reccursion {}'.format(poly))
 ax = plt.subplot(132)
 ax.set_title('Discretized Stieltjes ')
 _=plt.plot(x, poly(x).T)
@@ -174,7 +175,7 @@ polynomial_order = 3
 poly = cp.orth_ttr(polynomial_order, joint_distribution)
 
 # 3.1 generate samples
-number_of_samples = 2*cp.bertran.terms(polynomial_order, len(joint_distribution))
+number_of_samples = cp.bertran.terms(polynomial_order, len(joint_distribution))
 samples = joint_distribution.sample(size=number_of_samples, rule='R')
 
 # 3.2 evaluate the simple model for all samples
